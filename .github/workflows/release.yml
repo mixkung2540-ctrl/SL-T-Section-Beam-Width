@@ -1,0 +1,29 @@
+name: Build and release calculator
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'build.cjs', '.github/workflows/release.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node build.cjs
+      - name: Publish versioned HTML
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          VERSION=$(node -e "const s=require('fs').readFileSync('src/app.template.html','utf8');const v=s.match(/const VERSION='(\d+\.\d+\.\d+)'/);if(!v)process.exit(1);console.log(v[1]);")
+          TAG="beff-v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release already exists: $TAG (not overwritten)"
+          else
+            gh release create "$TAG" EA-Beff-Calculator.html --target "$GITHUB_SHA" --title "EA Beff Calculator $VERSION" --notes "Standalone HTML calculator. Download EA-Beff-Calculator.html and open in Edge or Chrome. Save your project before updating."
+          fi
