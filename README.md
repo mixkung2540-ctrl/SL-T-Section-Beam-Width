@@ -20,6 +20,12 @@ Run `node build.cjs` (no additional packages required). The supplied logo is emb
 
 To publish a new version, update the version in `src/app.template.html` and push to `main`. The release workflow builds and attaches the HTML to a versioned GitHub Release. Existing release tags are not overwritten.
 
+## 0.2.4
+
+- Added beam centreline and left/right effective-flange-edge dimensions in section previews and reports.
+- L = beff,1 + bw/2; R = beff,2 + bw/2. These are distances to the effective edges, not the physical slab edges.
+- Existing calculation logic unchanged.
+
 ## 0.2.3
 
 - Report text is black in preview, exported HTML and printed PDF.
